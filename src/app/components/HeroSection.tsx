@@ -2,9 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
 
 export function HeroSection() {
   const router = useRouter();
+  const { isSignedIn } = useAuth();
 
   return (
     <section className="container mx-auto px-4 py-20 text-center">
@@ -16,19 +18,21 @@ export function HeroSection() {
           Google Gemini 기반, 전문적이고 상세한 사주 분석
         </p>
         <div className="flex justify-center gap-4 pt-4">
-          <Button
-            size="lg"
-            onClick={() => router.push('/sign-up')}
-          >
-            무료로 시작하기
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => router.push('/sign-in')}
-          >
-            로그인
-          </Button>
+          {isSignedIn ? (
+            <Button
+              size="lg"
+              onClick={() => router.push('/dashboard')}
+            >
+              대시보드로 이동
+            </Button>
+          ) : (
+            <Button
+              size="lg"
+              onClick={() => router.push('/sign-up')}
+            >
+              무료로 시작하기
+            </Button>
+          )}
         </div>
       </div>
     </section>

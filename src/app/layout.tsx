@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 import Providers from './providers';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: '사주 분석 서비스 - AI가 분석하는 나의 사주',
@@ -16,8 +18,12 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="ko" suppressHydrationWarning>
-        <body className="antialiased font-sans">
-          <Providers>{children}</Providers>
+        <body className="antialiased font-sans flex min-h-screen flex-col">
+          <Providers>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </Providers>
         </body>
       </html>
     </ClerkProvider>

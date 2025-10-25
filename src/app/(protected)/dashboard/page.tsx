@@ -1,48 +1,76 @@
-"use client";
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { getUserByClerkId, getUserAnalyses } from '@/lib/supabase/queries';
+import { SubscriptionCard } from '@/components/subscription/SubscriptionCard';
+import { EmptyState } from './components/EmptyState';
+import { AnalysesList } from './components/AnalysesList';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { Plus } from 'lucide-react';
 
-import Image from "next/image";
-import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
+export default async function DashboardPage() {
+  // Get authenticated user
+  const { userId } = await auth();
 
-type DashboardPageProps = {
-  params: Promise<Record<string, never>>;
-};
+  if (!userId) {
+    redirect('/sign-in');
+  }
 
-export default function DashboardPage({ params }: DashboardPageProps) {
-  void params;
-  const { user } = useCurrentUser();
+  // Fetch user and analyses data
+  const supabase = await createClient();
+  const user = await getUserByClerkId(supabase, userId);
+
+  if (!user) {
+    // User not found in database (webhook might not have processed yet)
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="rounded-lg border border-destructive bg-destructive/10 p-6">
+          <h2 className="text-lg font-semibold">계정을 불러오는 중입니다</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            잠시 후 다시 시도해주세요. 문제가 계속되면 고객센터에 문의해주세요.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const analyses = await getUserAnalyses(supabase, user.id, { limit: 100 });
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 py-12">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold">대시보드</h1>
-        <p className="text-slate-500">
-          {user?.email ?? "알 수 없는 사용자"} 님, 환영합니다.
-        </p>
-      </header>
-      <div className="overflow-hidden rounded-xl border border-slate-200">
-        <Image
-          alt="대시보드"
-          src="https://picsum.photos/seed/dashboard/960/420"
-          width={960}
-          height={420}
-          className="h-auto w-full object-cover"
-        />
+    <div className="container mx-auto px-4 py-8">
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">대시보드</h1>
+            <p className="mt-2 text-muted-foreground">
+              {user.first_name || user.email}님, 환영합니다
+            </p>
+          </div>
+          {analyses.length > 0 && (
+            <Button asChild size="lg">
+              <Link href="/analysis/new">
+                <Plus className="mr-2 h-4 w-4" />
+                새 검사하기
+              </Link>
+            </Button>
+          )}
+        </div>
+
+        {/* Subscription Card */}
+        <SubscriptionCard user={user} />
+
+        {/* Analyses Section */}
+        <div>
+          <h2 className="mb-4 text-2xl font-semibold">내 분석 내역</h2>
+          {analyses.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <AnalysesList initialAnalyses={analyses} />
+          )}
+        </div>
       </div>
-      <section className="grid gap-4 md:grid-cols-2">
-        <article className="rounded-lg border border-slate-200 p-4">
-          <h2 className="text-lg font-medium">현재 세션</h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Supabase 미들웨어가 세션 쿠키를 자동으로 동기화합니다.
-          </p>
-        </article>
-        <article className="rounded-lg border border-slate-200 p-4">
-          <h2 className="text-lg font-medium">보안 체크</h2>
-          <p className="mt-2 text-sm text-slate-500">
-            보호된 App Router 세그먼트로 라우팅되며, 로그인 사용
-            자만 접근할 수 있습니다.
-          </p>
-        </article>
-      </section>
     </div>
   );
 }

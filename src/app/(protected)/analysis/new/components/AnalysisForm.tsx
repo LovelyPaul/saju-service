@@ -15,12 +15,17 @@ import { Loader2 } from 'lucide-react';
 
 interface AnalysisFormProps {
   userId: string;
+  subscriptionTier: 'free' | 'pro';
 }
 
-export function AnalysisForm({ userId }: AnalysisFormProps) {
+export function AnalysisForm({ userId, subscriptionTier }: AnalysisFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const getEstimatedTime = () => {
+    return subscriptionTier === 'pro' ? '3~5분' : '5~10분';
+  };
 
   const {
     register,
@@ -68,6 +73,14 @@ export function AnalysisForm({ userId }: AnalysisFormProps) {
       <Card>
         <CardHeader>
           <CardTitle>사주 분석 정보 입력</CardTitle>
+          <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <p className="text-sm text-blue-900">
+              <span className="font-semibold">예상 분석 시간:</span> {getEstimatedTime()}
+            </p>
+            <p className="mt-1 text-xs text-blue-700">
+              AI가 정확한 사주 분석을 위해 신중하게 해석하고 있습니다. 분석이 완료되면 알림을 보내드립니다.
+            </p>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Name */}

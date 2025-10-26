@@ -30,13 +30,19 @@ export function AnalysisCard({ analysis }: AnalysisCardProps) {
           </Badge>
         </div>
         <CardDescription className="space-y-1">
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            <span>{genderIcon}</span>
-            <span>|</span>
-            <Calendar className="h-4 w-4" />
-            <span>{formatDate(analysis.birth_date)}</span>
-            {analysis.birth_time && <span>({analysis.birth_time})</span>}
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <div className="flex items-center gap-1">
+              <User className="h-4 w-4" />
+              <span>{genderIcon}</span>
+            </div>
+            <span className="text-muted-foreground">|</span>
+            <div className="flex items-center gap-1">
+              <Calendar className="h-4 w-4" />
+              <span>{formatDate(analysis.birth_date)}</span>
+            </div>
+            {analysis.birth_time && (
+              <span className="text-muted-foreground">({analysis.birth_time})</span>
+            )}
           </div>
           <div className="text-xs">
             {formatRelativeTime(analysis.created_at)} 분석

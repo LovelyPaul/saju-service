@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import type { Gender } from '@/types/analysis';
-import { generateSajuAnalysisPrompt } from './prompts';
+import { generateSajuAnalysisPromptFree, generateSajuAnalysisPromptPro } from './prompts';
 import { API_TIMEOUT } from '@/constants/app';
 
 // Initialize Gemini AI
@@ -14,7 +14,6 @@ export interface GenerateSajuAnalysisInput {
   birthTime?: string;
   isLunar: boolean;
   gender: Gender;
-  timeZone?: string;
   additionalInfo?: string;
   model: GeminiModel;
 }
@@ -28,16 +27,26 @@ export interface GenerateSajuAnalysisInput {
 export async function generateSajuAnalysis(
   input: GenerateSajuAnalysisInput
 ): Promise<string> {
-  // Generate prompt
-  const prompt = generateSajuAnalysisPrompt({
-    name: input.name,
-    birthDate: input.birthDate,
-    birthTime: input.birthTime,
-    isLunar: input.isLunar,
-    gender: input.gender,
-    timeZone: input.timeZone,
-    additionalInfo: input.additionalInfo,
-  });
+  // Generate prompt based on model (tier)
+  // gemini-2.5-pro = Pro tier (detailed), gemini-2.5-flash = Free tier (simplified)
+  const isPro = input.model === 'gemini-2.5-pro';
+  const prompt = isPro
+    ? generateSajuAnalysisPromptPro({
+        name: input.name,
+        birthDate: input.birthDate,
+        birthTime: input.birthTime,
+        isLunar: input.isLunar,
+        gender: input.gender,
+        additionalInfo: input.additionalInfo,
+      })
+    : generateSajuAnalysisPromptFree({
+        name: input.name,
+        birthDate: input.birthDate,
+        birthTime: input.birthTime,
+        isLunar: input.isLunar,
+        gender: input.gender,
+        additionalInfo: input.additionalInfo,
+      });
 
   // Select model
   const model = genAI.getGenerativeModel({

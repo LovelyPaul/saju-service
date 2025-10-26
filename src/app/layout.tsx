@@ -6,8 +6,8 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: '사주 분석 서비스 - AI가 분석하는 나의 사주',
-  description: 'Google Gemini 기반, 전문적이고 상세한 사주 분석 서비스',
+  title: '운명 계산기 - 운명을 믿기 전에, AI로 먼저 계산하세요',
+  description: '천간지지 124,416가지 조합을 데이터로 분석합니다. 당신의 사주에 숨겨진 패턴을 찾아드립니다.',
 };
 
 export default function RootLayout({

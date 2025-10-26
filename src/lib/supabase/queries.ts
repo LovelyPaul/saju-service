@@ -21,14 +21,14 @@ export async function getUserByClerkId(
     .from('users')
     .select('*')
     .eq('clerk_user_id', clerkUserId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('Error fetching user:', error);
     return null;
   }
 
-  return data as User;
+  return data as User | null;
 }
 
 /**
@@ -45,10 +45,14 @@ export async function getSubscriptionStatus(
     .from('users')
     .select('*')
     .eq('id', userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('Error fetching subscription status:', error);
+    return null;
+  }
+
+  if (!data) {
     return null;
   }
 
@@ -122,14 +126,14 @@ export async function getAnalysisById(
     .select('*')
     .eq('id', analysisId)
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('Error fetching analysis:', error);
     return null;
   }
 
-  return data as Analysis;
+  return data as Analysis | null;
 }
 
 /**
@@ -146,14 +150,14 @@ export async function getBillingKey(
     .from('billing_keys')
     .select('*')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('Error fetching billing key:', error);
     return null;
   }
 
-  return data as BillingKey;
+  return data as BillingKey | null;
 }
 
 /**

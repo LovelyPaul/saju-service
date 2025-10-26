@@ -9,14 +9,22 @@ export function HeroSection() {
   const { isSignedIn } = useAuth();
 
   return (
-    <section className="container mx-auto px-4 py-20 text-center">
+    <section id="home" className="container mx-auto px-4 py-20 text-center scroll-mt-16">
       <div className="mx-auto max-w-3xl space-y-6">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-          AI가 분석하는 나의 사주
+          운명 계산기
         </h1>
-        <p className="text-xl text-muted-foreground">
-          Google Gemini 기반, 전문적이고 상세한 사주 분석
-        </p>
+        <div className="space-y-4">
+          <p className="text-xl text-muted-foreground">
+            운명을 믿기 전에, AI로 먼저 계산하세요.
+          </p>
+          <p className="text-base text-muted-foreground">
+            천간지지 124,416가지 조합을 데이터로 분석합니다.
+          </p>
+          <p className="text-base text-muted-foreground">
+            당신의 사주에 숨겨진 패턴을 찾아드립니다.
+          </p>
+        </div>
         <div className="flex justify-center gap-4 pt-4">
           {isSignedIn ? (
             <Button

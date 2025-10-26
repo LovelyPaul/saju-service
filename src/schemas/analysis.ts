@@ -8,7 +8,6 @@ export const createAnalysisSchema = z.object({
   gender: z.enum(['male', 'female'], {
     errorMap: () => ({ message: '성별을 선택해주세요' }),
   }),
-  time_zone: z.string().optional(),
   additional_info: z.string().max(500, '추가 정보는 최대 500자까지 입력 가능합니다').optional(),
 });
 

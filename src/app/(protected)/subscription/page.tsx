@@ -9,6 +9,7 @@ import { calculateSubscriptionStatus } from '@/utils/subscription';
 import { formatDate } from '@/utils/date';
 import { SUBSCRIPTION } from '@/constants/app';
 import Link from 'next/link';
+import { CancelSubscriptionButton } from './components/CancelSubscriptionButton';
 
 export default async function SubscriptionPage() {
   const { userId } = await auth();
@@ -134,9 +135,7 @@ export default async function SubscriptionPage() {
             )}
 
             {status.type === 'pro_active' && (
-              <Button variant="destructive" className="w-full">
-                구독 취소
-              </Button>
+              <CancelSubscriptionButton />
             )}
 
             {status.type === 'pro_cancelled' && (

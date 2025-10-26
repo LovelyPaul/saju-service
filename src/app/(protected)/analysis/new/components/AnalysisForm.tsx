@@ -26,9 +26,11 @@ export function AnalysisForm({ userId }: AnalysisFormProps) {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    setValue,
+    formState: { errors, isValid },
   } = useForm<CreateAnalysisInput>({
     resolver: zodResolver(createAnalysisSchema),
+    mode: 'onChange',
     defaultValues: {
       is_lunar: false,
       gender: 'male',
@@ -104,8 +106,11 @@ export function AnalysisForm({ userId }: AnalysisFormProps) {
                 <input
                   type="radio"
                   value="false"
-                  {...register('is_lunar')}
+                  {...register('is_lunar', {
+                    setValueAs: (v) => v === 'true' || v === true,
+                  })}
                   disabled={isSubmitting}
+                  defaultChecked
                 />
                 <span>양력</span>
               </label>
@@ -113,7 +118,9 @@ export function AnalysisForm({ userId }: AnalysisFormProps) {
                 <input
                   type="radio"
                   value="true"
-                  {...register('is_lunar')}
+                  {...register('is_lunar', {
+                    setValueAs: (v) => v === 'true' || v === true,
+                  })}
                   disabled={isSubmitting}
                 />
                 <span>음력</span>
@@ -167,20 +174,6 @@ export function AnalysisForm({ userId }: AnalysisFormProps) {
             )}
           </div>
 
-          {/* Time Zone */}
-          <div className="space-y-2">
-            <Label htmlFor="time_zone">시간대 (선택)</Label>
-            <Input
-              id="time_zone"
-              {...register('time_zone')}
-              placeholder="예: Asia/Seoul"
-              disabled={isSubmitting}
-            />
-            {errors.time_zone && (
-              <p className="text-sm text-destructive">{errors.time_zone.message}</p>
-            )}
-          </div>
-
           {/* Additional Info */}
           <div className="space-y-2">
             <Label htmlFor="additional_info">추가 요청사항 (선택)</Label>
@@ -207,7 +200,7 @@ export function AnalysisForm({ userId }: AnalysisFormProps) {
             type="submit"
             size="lg"
             className="w-full"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isValid}
           >
             {isSubmitting ? (
               <>

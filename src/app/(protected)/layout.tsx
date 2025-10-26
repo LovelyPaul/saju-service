@@ -1,34 +1,36 @@
-"use client";
-
-import { useEffect, type ReactNode } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
-import { LOGIN_PATH } from "@/constants/auth";
-
-const buildRedirectUrl = (pathname: string) => {
-  const redirectUrl = new URL(LOGIN_PATH, window.location.origin);
-  redirectUrl.searchParams.set("redirectedFrom", pathname);
-  return redirectUrl.toString();
-};
+import { type ReactNode } from 'react';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { createClient } from '@/lib/supabase/server';
+import { getUserByClerkId } from '@/lib/supabase/queries';
+import { Sidebar } from '@/components/layout/Sidebar';
 
 type ProtectedLayoutProps = {
   children: ReactNode;
 };
 
-export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
-  const { isAuthenticated, isLoading } = useCurrentUser();
-  const router = useRouter();
-  const pathname = usePathname();
+export default async function ProtectedLayout({ children }: ProtectedLayoutProps) {
+  // Get user info for sidebar
+  const { userId } = await auth();
+  const clerkUser = await currentUser();
 
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.replace(buildRedirectUrl(pathname));
+  let userEmail = clerkUser?.emailAddresses[0]?.emailAddress;
+  let subscriptionTier = 'free';
+
+  if (userId) {
+    const supabase = await createClient();
+    const user = await getUserByClerkId(supabase, userId);
+    if (user) {
+      userEmail = user.email;
+      subscriptionTier = user.subscription_tier;
     }
-  }, [isAuthenticated, isLoading, pathname, router]);
-
-  if (!isAuthenticated) {
-    return null;
   }
 
-  return <>{children}</>;
+  return (
+    <div className="flex h-screen overflow-hidden">
+      <Sidebar userEmail={userEmail} subscriptionTier={subscriptionTier} />
+      <main className="flex-1 overflow-y-auto ml-60">
+        {children}
+      </main>
+    </div>
+  );
 }

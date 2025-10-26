@@ -6,21 +6,69 @@ export interface SajuInput {
   birthTime?: string;
   isLunar: boolean;
   gender: Gender;
-  timeZone?: string;
   additionalInfo?: string;
 }
 
-export const generateSajuAnalysisPrompt = (input: SajuInput): string => {
+// Free 요금제용 간소화된 프롬프트
+export const generateSajuAnalysisPromptFree = (input: SajuInput): string => {
+  const birthTimeInfo = input.birthTime ? `${input.birthTime}` : '출생시간 미상';
+  const lunarSolarInfo = input.isLunar ? '음력' : '양력';
+
+  return `당신은 사주 분석 전문가입니다. 다음 정보를 바탕으로 간단명료한 사주 분석을 제공해주세요.
+
+**[고객 정보]**
+- **이름**: ${input.name}
+- **생년월일**: ${input.birthDate} (${lunarSolarInfo})
+- **출생시간**: ${birthTimeInfo}
+- **성별**: ${input.gender === 'male' ? '남성' : '여성'}
+${input.additionalInfo ? `- **추가 요청**: ${input.additionalInfo}\n` : ''}
+
+**[분석 항목]**
+
+### 1. 📊 기본 사주 분석
+- 사주팔자 구성 (천간, 지지)
+- 오행 분포 및 균형
+- 일간 특성
+
+### 2. 🎯 성격 및 적성
+- 핵심 성격 특성
+- 강점 및 약점
+- 추천 직업군
+
+### 3. 💰 주요 운세
+- 재물운
+- 직업/학업운
+- 연애/결혼운
+- 건강운
+
+### 4. 💡 실천 조언
+- 생활 습관 개선 방향
+- 주의할 점
+- 개운법
+
+**[형식]**
+- 마크다운 형식
+- 각 항목당 2-3 문단으로 간결하게 작성
+- 긍정적이고 실용적인 어조
+- 총 분량: A4 1장 정도
+
+**[주의사항]**
+- 확정적 미래 예측 금지
+- 부정적 표현 자제
+- 실천 가능한 조언 제공`;
+};
+
+// Pro 요금제용 상세 프롬프트
+export const generateSajuAnalysisPromptPro = (input: SajuInput): string => {
   const birthTimeInfo = input.birthTime ? `${input.birthTime}` : '출생시간 미상 (미상 시 삼주(三柱) 기반 분석)';
   const lunarSolarInfo = input.isLunar ? '음력' : '양력';
-  const timeZoneInfo = input.timeZone ? `(표준시: ${input.timeZone})` : '';
 
   return `당신은 25년 경력의 동양 철학 전문가이자, 고객의 삶에 긍정적인 통찰을 제공하는 전문 사주 분석 컨설턴트입니다. 명리학(命理學)에 기반하여 개인의 잠재력을 발굴하고 현명한 선택을 돕는 것을 최우선으로 합니다.
 
 **[고객 정보]**
 - **이름**: ${input.name}
 - **생년월일**: ${input.birthDate} (${lunarSolarInfo})
-- **출생시간**: ${birthTimeInfo} ${timeZoneInfo}
+- **출생시간**: ${birthTimeInfo}
 - **성별**: ${input.gender === 'male' ? '남성' : '여성'}
 ${input.additionalInfo ? `- **추가 요청/고민**: ${input.additionalInfo}\n` : ''}
 

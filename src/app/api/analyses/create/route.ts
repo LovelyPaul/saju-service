@@ -75,7 +75,6 @@ export async function POST(request: NextRequest) {
         birthTime: input.birth_time,
         isLunar: input.is_lunar,
         gender: input.gender,
-        timeZone: input.time_zone,
         additionalInfo: input.additional_info,
         model,
       });
@@ -97,7 +96,6 @@ export async function POST(request: NextRequest) {
         birth_time: input.birth_time || null,
         is_lunar: input.is_lunar,
         gender: input.gender,
-        time_zone: input.time_zone || null,
         additional_info: input.additional_info || null,
         analysis_result: analysisResult,
         model_used: user.subscription_tier === 'pro' ? 'pro' : 'flash',

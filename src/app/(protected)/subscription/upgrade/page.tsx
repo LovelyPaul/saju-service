@@ -1,10 +1,11 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getUserByClerkId } from '@/lib/supabase/queries';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { SUBSCRIPTION } from '@/constants/app';
 import { Check } from 'lucide-react';
+import { CardPaymentForm } from './components/CardPaymentForm';
 
 export default async function SubscriptionUpgradePage() {
   const { userId } = await auth();
@@ -13,12 +14,16 @@ export default async function SubscriptionUpgradePage() {
     redirect('/sign-in');
   }
 
+  const clerkUser = await currentUser();
   const supabase = await createClient();
   const user = await getUserByClerkId(supabase, userId);
 
   if (!user) {
     redirect('/dashboard');
   }
+
+  const userEmail = clerkUser?.emailAddresses[0]?.emailAddress || user.email;
+  const userName = user.first_name || clerkUser?.firstName || '고객님';
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8">
@@ -71,7 +76,7 @@ export default async function SubscriptionUpgradePage() {
           </CardContent>
         </Card>
 
-        {/* Payment Widget Placeholder */}
+        {/* Payment Widget */}
         <Card>
           <CardHeader>
             <CardTitle>결제 정보</CardTitle>
@@ -80,14 +85,11 @@ export default async function SubscriptionUpgradePage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="rounded-lg border border-dashed p-8 text-center">
-              <p className="text-muted-foreground">
-                토스페이먼츠 위젯이 여기에 표시됩니다
-              </p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                (구현 예정: Toss Payments Widget Integration)
-              </p>
-            </div>
+            <CardPaymentForm
+              userId={userId}
+              userEmail={userEmail}
+              userName={userName}
+            />
           </CardContent>
         </Card>
 

@@ -28,7 +28,7 @@ export default async function ProtectedLayout({ children }: ProtectedLayoutProps
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar userEmail={userEmail} subscriptionTier={subscriptionTier} />
-      <main className="flex-1 overflow-y-auto ml-60">
+      <main className="flex-1 overflow-y-auto lg:ml-60">
         {children}
       </main>
     </div>

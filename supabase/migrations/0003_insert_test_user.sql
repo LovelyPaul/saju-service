@@ -16,9 +16,9 @@ INSERT INTO public.users (
   updated_at
 )
 VALUES (
-  '여기에_clerk_user_id_입력',  -- ← http://localhost:3001/test-user-id에서 확인한 ID로 교체
-  'your-email@gmail.com',        -- ← 본인 이메일로 교체
-  '홍길동',                      -- ← 본인 이름으로 교체
+  'user_34Z1qeInYY6Mv98dl6Tj9P1Jqfx',  -- ← http://localhost:3001/test-user-id에서 확인한 ID로 교체
+  'lovepaul98@gmail.com',        -- ← 본인 이메일로 교체
+  '로미오',                      -- ← 본인 이름으로 교체
   'free',
   3,
   NOW(),

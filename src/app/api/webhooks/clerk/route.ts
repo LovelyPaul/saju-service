@@ -56,10 +56,22 @@ export async function POST(req: Request) {
     try {
       const supabase = await createPureClient();
 
+      // Get email - handle both test webhooks and real user creation
+      let email = '';
+      if (email_addresses && Array.isArray(email_addresses) && email_addresses.length > 0) {
+        email = email_addresses[0]?.email_address || '';
+      }
+
+      // If no email (e.g., test webhook), use placeholder
+      if (!email) {
+        console.warn('No email in webhook payload, this might be a test event');
+        email = `temp_${id}@clerk-webhook-test.local`;
+      }
+
       // Insert user into Supabase
       const { error } = await supabase.from('users').insert({
         clerk_user_id: id,
-        email: email_addresses[0]?.email_address || '',
+        email: email,
         first_name: first_name || null,
         subscription_tier: 'free',
         analyses_remaining: 3,
@@ -67,10 +79,11 @@ export async function POST(req: Request) {
 
       if (error) {
         console.error('Error creating user in Supabase:', error);
+        console.error('User ID:', id, 'Email:', email);
         return new Response('Error creating user', { status: 500 });
       }
 
-      console.log('✅ User created in Supabase:', id);
+      console.log('✅ User created in Supabase:', id, 'Email:', email);
     } catch (error) {
       console.error('Error processing user.created webhook:', error);
       return new Response('Error processing webhook', { status: 500 });

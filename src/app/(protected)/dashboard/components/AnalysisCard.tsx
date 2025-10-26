@@ -19,7 +19,7 @@ export function AnalysisCard({ analysis }: AnalysisCardProps) {
 
   return (
     <Card
-      className="cursor-pointer transition-colors hover:bg-accent"
+      className="cursor-pointer transition-colors hover:bg-accent/50"
       onClick={() => router.push(`/analysis/${analysis.id}`)}
     >
       <CardHeader>

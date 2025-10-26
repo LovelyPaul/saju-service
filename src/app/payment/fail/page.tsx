@@ -3,12 +3,13 @@ import { Button } from '@/components/ui/button';
 import { XCircle } from 'lucide-react';
 import Link from 'next/link';
 
-export default function PaymentFailPage({
+export default async function PaymentFailPage({
   searchParams,
 }: {
-  searchParams: { message?: string };
+  searchParams: Promise<{ message?: string }>;
 }) {
-  const errorMessage = searchParams.message || '결제 처리 중 오류가 발생했습니다';
+  const params = await searchParams;
+  const errorMessage = params.message || '결제 처리 중 오류가 발생했습니다';
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-16">

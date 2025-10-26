@@ -35,7 +35,7 @@ export default async function NewAnalysisPage() {
         </p>
       </div>
 
-      <AnalysisForm userId={user.id} subscriptionTier={user.subscription_tier} />
+      <AnalysisForm userId={user.id} />
     </div>
   );
 }
